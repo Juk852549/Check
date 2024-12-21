@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>มหาลัย check</title>
+    <style>
+       body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f1;
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            color: #333;
+        }
+        header {
+            background-color: #388E3C; /* สีเขียวเข้ม */
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .subject-row {
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            background-color: #fafafa;
+        }
+        .subject-title {
+            background-color: #388E3C; /* สีเขียวเข้ม */
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 15px 15px 0 0;
+            text-align: left;
+            transition: background-color 0.3s ease;
+        }
+        .subject-title:hover {
+            background-color: #2C6B2F; /* สีเขียวเข้มขึ้น */
+        }
+        .topic-list {
+            display: none;
+            list-style-type: none;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 0 0 15px 15px;
+        }
+        .topic-item {
+            padding: 15px 0;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .topic-item:last-child {
+            border-bottom: none;
+        }
+        .progress-bar-container {
+            margin: 40px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 25px; /* Increased height */
+            background-color: #ddd;
+            border-radius: 12px;
+            position: relative;
+        }
+        .progress {
+            height: 100%;
+            background-color: #388E3C; /* สีเขียวเข้ม */
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px; /* Increased font size */
+            color: white;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 15px 30px;
+            background-color: #388E3C; /* สีเขียวเข้ม */
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .btn:hover {
+            background-color: #2C6B2F; /* สีเขียวเข้มขึ้น */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .saved-notice {
+            color: green;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+        @media screen and (max-width: 768px) {
+            header {
+                font-size: 30px;
+            }
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+            .subject-title {
+                font-size: 20px;
+                padding: 15px;
+            }
+            .topic-item {
+                font-size: 16px;
+                padding: 10px 0;
+            }
+            .btn {
+                font-size: 16px;
+                padding: 12px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    มหาลัย check
+</header>
+
+<div class="container">
+    <div id="subject-table">
+        <!-- Dynamic content will go here -->
+    </div>
+
+    <div class="progress-bar-container">
+        <label for="progress" style="font-size: 22px;">Overall Progress: </label>
+        <div class="progress-bar">
+            <div class="progress" id="progress" style="width: 0%;"></div>
+            <div class="progress-text" id="progress-text">0% completed</div>
+        </div>
+    </div>
+
+    <button class="btn" id="save-btn">Save Progress</button>
+    <p class="saved-notice" id="saved-notice">Progress saved successfully!</p>
+</div>
+
+<script>
+    const subjects = [
+        { name: "Mathematics", topics: ["เซต", "ตรรกะ", "จำนวนจริง", "ความสัมพันธ์และฟังก์ชัน", "ฟังก์ชันเลขยกกำลังและลอการิธึม", 
+        "เรขาคณิตวิเคราะห์", "ฟังก์ชันตรีโกณมิติ", "เมทริกซ์", "เวกเตอร์", "จำนวนเชิงซ้อน", "หลักการนับพื้นฐาน", 
+        "ความน่าจะเป็น", "อนุกรมและลำดับ", "แคลคูลัสเบื้องต้น", "สถิติและการวิเคราะห์ข้อมูล", 
+        "สถิติพรรณนา", "สถิติอนุมาน", "ตัวแปรสุ่มและการแจกแจงความน่าจะเป็น"] },
+        
+        { name: "English", topics: ["Parts of Speech", "Noun", "Quantifiers", "Pronoun", "Verb", "Adjective", "Adverb", "Subject-Verb Agreement", 
+        "Prepositions", "Conjunctions", "Tenses", "Active & Passive Voice", "Comparison", "If Clauses", "Conversation", "Reading", 
+        "Error Identification"] },
+
+        { name: "Chemistry", topics: ["ความปลอดภัยและทักษะการทดลอง", "อะตอมและธาตุ", "ตารางธาตุ", "พันธะเคมี", "โมลและสูตรเคมี", 
+        "สารละลาย", "สติชิโอมิตรี", "ก๊าซและกฎหมายของก๊าซ", "อัตราการเกิดปฏิกิริยา", "สมดุลเคมี", "กรดและเบส", 
+        "อิเล็กโทรเคมี", "เคมีอินทรีย์", "พอลิเมอร์", "เคมีและการแก้ปัญหา"] },
+        
+        { name: "Physics", topics: ["บทนำฟิสิกส์", "การเคลื่อนที่เชิงเส้น", "แรงและกฎของนิวตัน", "สมดุล", "งานและพลังงาน", 
+        "โมเมนตัมและการชน", "การเคลื่อนที่แบบฮาร์มอนิก", "คลื่น", "แสงและคลื่นแสง", "เสียง", 
+        "ไฟฟ้าสถิต", "วงจรไฟฟ้า", "แม่เหล็กและไฟฟ้าแม่เหล็ก", "ความร้อนและกฎหมายของก๊าซ", "ของแข็งและของไหล", "คลื่นแม่เหล็กไฟฟ้า", 
+        "ฟิสิกส์อะตอม", "ฟิสิกส์นิวเคลียร์และอนุภาค"] },
+
+        { name: "Biology", topics: ["บทนำชีววิทยา", "เคมีของชีวิต", "โครงสร้างของเซลล์", "การขนส่งข้ามเยื่อหุ้มเซลล์", "การหายใจในเซลล์", 
+        "การแบ่งเซลล์", "โครโมโซมและชีวโมเลกุล", "พันธุศาสตร์", "เทคโนโลยีดีเอ็นเอ", "วิวัฒนาการ", 
+        "พันธุศาสตร์ของประชากร", "การก่อตัวของสายพันธุ์"] },
+
+        { name: "THAI", topics: ["การอ่านเพื่อเข้าใจเนื้อหา", "การจับใจความ / การสรุปสาระสำคัญของข้อความ", "การตีความ", 
+        "การวิเคราะห์จุดประสงค์ / เจตนาของผู้เขียน", "การเรียงลำดับข้อความ", "การเรียงความ", "การพรรณา / บรรยาย / อธิบาย", 
+        "การใช้เหตุผล", "การแสดงทรรศนะ", "การโต้แย้ง", "การโน้มน้าวใจ", "การวิเคราะห์จุดประสงค์ในการพูด", 
+        "การใช้คำถามและคำตอบที่สัมพันธ์กัน", "การตีความ / อนุมาน / วิเคราะห์สาร / บุคลิกผู้พูดหรือผู้ฟัง", "การสะกดคำ", 
+        "การใช้คำตรงความหมาย", "ประโยคกำกวม", "ประโยคสมบูรณ์ / บกพร่อง", "ระดับภาษา", "สำนวน", 
+        "ชนิดของประโยคตามเจตนา", "โวหารภาพพจน์", "โวหารการเขียน", "คำที่มีความหมายตรงกับคำที่มีความหมายอุปมา", 
+        "คำทับศัพท์", "คำราชาศัพท์"] },
+
+        { name: "SOC", topics: ["ความรู้เบื้องต้นเกี่ยวกับศาสนา", "ศาสนาพุทธ", "ศาสนาคริสต์", "ศาสนาพราหมณ์ - ฮินดู", "พุทธประวัติ", 
+        "ความรู้เบื้องต้น", "กิจกรรมทางเศรษฐกิจ", "กลไกตลาด", "ตลาด", "ระบบเศรษฐกิจ", "การเงิน", 
+        "การธนาคาร", "การคลัง", "องค์กรทางเศรษฐกิจ", "เศรษฐกิจระหว่างประเทศ", "สหกรณ์", 
+        "เศรษฐกิจพอเพียงและเกษตรทฤษฎีใหม่", "วิกฤติเศรษฐกิจ", "แผนพัฒนาเศรษฐกิจและสังคมแห่งชาติ", 
+        "การเจริญเติบโตทางเศรษฐกิจ", "สังคมวิทยา", "รัฐศาสตร์", "นิติศาสตร์", "ความรู้เบื้องต้น"] },
+
+        { name: "Geography", topics: ["ภูมิศาสตร์แต่ละทวีป", "ภูมิศาสตร์ไทย", "ทรัพยากรธรรมชาติและสิ่งแวดล้อม", "โลกน่ารู้", 
+        "อาเซียนศึกษา"] }
+    ];
+
+    const subjectTable = document.getElementById('subject-table');
+    const progressText = document.getElementById('progress-text');
+    const progressBar = document.getElementById('progress');
+
+    // Generate the subject checklist table
+    subjects.forEach((subject, index) => {
+        let row = document.createElement('div');
+        row.classList.add('subject-row');
+        row.innerHTML = `
+            <div class="subject-title" onclick="toggleTopics(${index})">${subject.name}</div>
+            <ul class="topic-list" id="topics-${index}">
+                ${subject.topics.map((topic, i) => `
+                    <li class="topic-item">
+                        <input type="checkbox" id="topic-${index}-${i}" onchange="updateProgress(${index})"> 
+                        ${topic}
+                    </li>
+                `).join('')}
+            </ul>
+            <div class="progress-bar-container">
+                <p style="font-size: 18px;">Progress: <span id="progress-${index}" class="percentage">0%</span></p>
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar-${index}" style="width: 0%;"></div>
+                    <div class="progress-text" id="progress-text-${index}">0%</div>
+                </div>
+            </div>
+        `;
+        subjectTable.appendChild(row);
+    }
+);
+
+
+    function toggleTopics(index) {
+        const topicList = document.getElementById(`topics-${index}`);
+        topicList.style.display = topicList.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function updateProgress(index) {
+        const subject = subjects[index];
+        const checkboxes = document.querySelectorAll(`#topics-${index} input[type="checkbox"]`);
+        const completedTopics = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+        const subjectProgress = (completedTopics / subject.topics.length) * 100;
+        document.getElementById(`progress-${index}`).innerText = `${Math.round(subjectProgress)}%`;
+        document.getElementById(`progress-bar-${index}`).style.width = `${subjectProgress}%`;
+        document.getElementById(`progress-text-${index}`).innerText = `${Math.round(subjectProgress)}%`;
+
+        updateOverallProgress();
+    }
+
+    function updateOverallProgress() {
+        let totalTopics = 0;
+        let completedTopics = 0;
+
+        subjects.forEach((subject, index) => {
+            const checkboxes = document.querySelectorAll(`#topics-${index} input[type="checkbox"]`);
+            totalTopics += checkboxes.length;
+            completedTopics += Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+        });
+
+        const progressPercentage = (completedTopics / totalTopics) * 100;
+        document.getElementById('progress').style.width = `${progressPercentage}%`;
+        document.getElementById('progress-text').innerText = `${Math.round(progressPercentage)}% completed`;
+    }
+
+    // Save progress when clicked
+    document.getElementById('save-btn').addEventListener('click', () => {
+        document.getElementById('saved-notice').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('saved-notice').style.display = 'none';
+        }, 2000);
+    });
+</script>
+
+</body>
+</html>
